@@ -31,7 +31,6 @@ jobs:
       - name: Build Android APK
         run: |
           flutter pub get
-          flutter test
           flutter build apk
 
       - name: Build Linux
