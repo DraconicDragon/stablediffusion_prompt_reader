@@ -13,7 +13,8 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-// TODO: add storage that saves location of used images
+// TODO: add memory for saving location of used images
+// TODO: add settings
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -97,28 +98,89 @@ class _MyHomePageState extends State<MyHomePage> {
                     } else {
                       // Display metadata using the returned value or a default message
                       String metadata = snapshot.data ?? 'tEXt chunk not found';
-                      return Padding(
-                        padding: const EdgeInsets.only(
-                            left: 0.0, right: 8.0, top: 8.0, bottom: 8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // TODO: Add buttons to copy the metadata to the clipboard
-                            // TODO: Make TextField for each metadata field by splitting metadata string into substrings
-                            TextField(
-                              decoration: const InputDecoration(
-                                labelText: 'Metadata',
+                      // The regex to split the string
+                      RegExp regex = RegExp(
+                        r"(Positive prompt: |Negative prompt: |Steps:|Sampler:|CFG scale:|Seed:|Model hash:|Model:|VAE hash:|VAE:|Clip skip:|TI hashes:|Version:)",
+                      );
+
+// The list of substrings
+                      List<String> substrings = metadata.split(regex);
+
+// The list of labels for the substrings
+                      List<String> labels = [
+                        "Positive prompt",
+                        "Negative prompt",
+                        "Steps",
+                        "Sampler",
+                        "CFG scale",
+                        "Seed",
+                        "Model hash",
+                        "Model",
+                        "VAE hash",
+                        "VAE",
+                        "Clip skip",
+                        "ControlNet 0",
+                        "TI hashes",
+                        "Version"
+                      ];
+
+// The list of widgets to display the substrings
+                      List<Widget> widgets = [];
+
+// Loop through the substrings and labels
+                      for (int i = 0; i < substrings.length; i++) {
+                        // Create a text field widget for each substring
+                        Widget widget = Padding(
+                          padding: const EdgeInsets.only(
+                              left: 0.0, right: 8.0, top: 8.0, bottom: 0),
+                          child: Align(
+                            alignment: Alignment.topLeft,
+                            child: TextField(
+                              decoration: InputDecoration(
+                                labelText:
+                                    labels[i], // Use the corresponding label
                                 border: OutlineInputBorder(),
                               ),
                               controller: TextEditingController(
-                                  text:
-                                      "Positive prompt: ${metadata.substring(11)}"),
+                                text: substrings[
+                                    i], // Use the corresponding substring
+                              ),
                               readOnly: true,
                               maxLines: null, // Allow multiple lines of text
                             ),
-                          ],
+                          ),
+                        );
+
+                        // Add the widget to the list
+                        widgets.add(widget);
+                      }
+
+// Display the widgets in a column
+                      return SingleChildScrollView(
+                        child: Column(
+                          children: widgets,
                         ),
                       );
+                      // TODO: make this an option
+                      // TODO: make option to exclude specific parts like version
+                      //return Padding(
+                      //  padding: const EdgeInsets.only(
+                      //      left: 0.0, right: 8.0, top: 8.0, bottom: 8.0),
+                      //  child: Align(
+                      //    alignment: Alignment.topLeft,
+                      //    child: TextField(
+                      //      decoration: const InputDecoration(
+                      //        labelText: 'Metadata',
+                      //        border: OutlineInputBorder(),
+                      //      ),
+                      //      controller: TextEditingController(
+                      //          text:
+                      //              "Positive prompt: ${metadata.substring(11)}"),
+                      //      readOnly: true,
+                      //      maxLines: null, // Allow multiple lines of text
+                      //    ),
+                      //  ),
+                      //);
                     }
                   },
                 ),
@@ -130,46 +192,48 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget buildImages() => Expanded(
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Column(
-            children: imgs.mapIndexed((index, image) {
-              final isSelected = image == selectedImage;
-              return Column(
-                children: <Widget>[
-                  GestureDetector(
-                    onTap: () => setState(() => selectedImage = image),
-                    child: Stack(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Image.file(
-                            File(image.path),
-                            width: 256,
-                            height: 256,
-                            fit: BoxFit.cover,
-                            filterQuality: FilterQuality.medium,
-                          ),
-                        ),
-                        if (isSelected)
-                          Positioned.fill(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.blue,
-                                  width: 4.0,
-                                ),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: SingleChildScrollView(
+            child: Column(
+              children: imgs.mapIndexed((index, image) {
+                final isSelected = image == selectedImage;
+                return Column(
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: () => setState(() => selectedImage = image),
+                      child: Stack(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Image.file(
+                              File(image.path),
+                              width: 256,
+                              height: 256,
+                              fit: BoxFit.cover,
+                              filterQuality: FilterQuality.medium,
                             ),
                           ),
-                      ],
+                          if (isSelected)
+                            Positioned.fill(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.blue,
+                                    width: 4.0,
+                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
-                  ),
-                  if (index < imgs.length - 1) const SizedBox(height: 8),
-                ],
-              );
-            }).toList(),
+                    if (index < imgs.length - 1) const SizedBox(height: 8),
+                  ],
+                );
+              }).toList(),
+            ),
           ),
         ),
       );
