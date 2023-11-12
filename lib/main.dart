@@ -11,6 +11,7 @@ void main() {
   runApp(const MyApp());
 }
 
+// TODO: make code cleaner 💀 and learn design patterns soon™️
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 // TODO: add memory for saving location of used images
