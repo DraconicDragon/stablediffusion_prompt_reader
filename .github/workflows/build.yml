@@ -17,11 +17,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Java
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'zulu'
-          java-version: '11'
+      #- name: Set up Java
+        #uses: actions/setup-java@v2
+        #with:
+          #distribution: 'zulu'
+          #java-version: '11'
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
@@ -29,10 +29,10 @@ jobs:
           flutter-version: '3.x'
           channel: 'stable'
 
-      - name: Build Android APK
-        run: |
-          flutter pub get
-          flutter build apk
+      #- name: Build Android APK
+        #run: |
+          #flutter pub get
+          #flutter build apk
 
       - name: Build Linux
         run: |
@@ -41,14 +41,38 @@ jobs:
           flutter config --enable-linux-desktop
           flutter build linux
           
-      - name: Upload APK
-        uses: actions/upload-artifact@v3
-        with:
-          name: SD_prompt_reader_android
-          path: build/app/outputs/flutter-apk/app-release.apk
+      #- name: Upload APK
+        #uses: actions/upload-artifact@v3
+        #with:
+          #name: SD_prompt_reader_android
+          #path: build/app/outputs/flutter-apk/app-release.apk
           
       - name: Upload Linux App
         uses: actions/upload-artifact@v3
         with:
           name: SD_prompt_reader_linux
           path: build/linux/x64/release/bundle
+          
+  build_windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.x'
+          channel: 'stable'
+
+      - name: Build Windows
+        run: |
+          flutter config --enable-windows-desktop
+          flutter build windows
+          
+      - name: Upload Windows App
+        uses: actions/upload-artifact@v3
+        with:
+          name: SD_prompt_reader_windows
+          path: build/windows/runner/Debug/stablediffusion_prompt_reader.exe
