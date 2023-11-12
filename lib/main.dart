@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:collection/collection.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:flutter/material.dart';
@@ -132,33 +133,16 @@ class _MyHomePageState extends State<MyHomePage> {
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           child: Column(
-            children: imgs.asMap().entries.map((entry) {
-              final int index = entry.key;
-              final XFile image = entry.value;
+            children: imgs.mapIndexed((index, image) {
               final isSelected = image == selectedImage;
-
               return Column(
                 children: <Widget>[
                   GestureDetector(
-                    // image selection
-                    onTap: () {
-                      setState(() {
-                        if (selectedImage == image) {
-                          // Tapped the same image, do nothing. probably not working, idk
-                        } else {
-                          selectedImage = image;
-                        }
-                      });
-                    },
+                    onTap: () => setState(() => selectedImage = image),
                     child: Stack(
                       children: [
                         ClipRRect(
                           borderRadius: BorderRadius.circular(10),
-                          // TODO: option to change size of images
-                          // TODO: option to change fit style
-                          // TODO: option to change number of columns
-                          // TODO: option for horizontal image list
-
                           child: Image.file(
                             File(image.path),
                             width: 256,
