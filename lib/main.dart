@@ -101,11 +101,13 @@ class _MyHomePageState extends State<MyHomePage> {
                       String metadata = snapshot.data ?? 'tEXt chunk not found';
                       // The regex to split the string
                       RegExp regex = RegExp(
-                        r"(Positive prompt: |Negative prompt: |Steps:|Sampler:|CFG scale:|Seed:|Model hash:|Model:|VAE hash:|VAE:|Clip skip:|TI hashes:|Version:)",
-                      );
+                          r"(Negative prompt: |Steps: |, Sampler: |, CFG scale: |, Seed: )"
+                          //|, Model hash: |, Model: |, VAE hash: |VAE: |Clip skip:|TI hashes:|Version:)",
+                          );
 
 // The list of substrings
-                      List<String> substrings = metadata.split(regex);
+                      List<String> substrings =
+                          metadata.substring(11).split(regex);
 
 // The list of labels for the substrings
                       List<String> labels = [
@@ -115,14 +117,14 @@ class _MyHomePageState extends State<MyHomePage> {
                         "Sampler",
                         "CFG scale",
                         "Seed",
-                        "Model hash",
-                        "Model",
-                        "VAE hash",
-                        "VAE",
-                        "Clip skip",
-                        "ControlNet 0",
-                        "TI hashes",
-                        "Version"
+                        //"Model hash",
+                        //"Model",
+                        //"VAE hash",
+                        //"VAE",
+                        //"Clip skip",
+                        //"ControlNet 0",
+                        //"TI hashes",
+                        //"Version"
                       ];
 
 // The list of widgets to display the substrings
@@ -140,7 +142,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               decoration: InputDecoration(
                                 labelText:
                                     labels[i], // Use the corresponding label
-                                border: OutlineInputBorder(),
+                                border: const OutlineInputBorder(),
                               ),
                               controller: TextEditingController(
                                 text: substrings[
